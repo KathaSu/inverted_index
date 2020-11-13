@@ -38,20 +38,50 @@ class Query():
             postingslist_t2 = postingslist[str(directory_t2[1])]
             iter_postingslist_t2 = iter(postingslist_t2)
         except KeyError:
-            print(f"Key '{term1}' was not found in Dictonary")
+            print(f"Key '{term2}' was not found in Dictonary")
 
-        try:
-            if len_postingslist_t1 > len_postingslist_t2:
+        try: 
+            if len_postingslist_t1 >= len_postingslist_t2:
                 for document_id in postingslist_t2:
-                    if document_id == next(iter_postingslist_t1):
-                        result_document_ids.append(document_id)
-                    if document_id > next(iter_postingslist_t1):
-                        while document_id > next(iter_postingslist_t1):
-                            next(iter_postingslist_t1)
-                            if document_id == next(iter_postingslist_t1):
-                                result_document_ids.append(document_id)
-                                pass
-                    if document_id < next(iter_postingslist_t1):
+                    try:
+                        if document_id == next(iter_postingslist_t1):
+                            result_document_ids.append(document_id)
+                    except StopIteration:
+                        pass
+                    try:
+                        if document_id > next(iter_postingslist_t1):
+                            while document_id > next(iter_postingslist_t1):
+                                next(iter_postingslist_t1)
+                                if document_id == next(iter_postingslist_t1):
+                                    result_document_ids.append(document_id)
+                                    break
+                    except StopIteration:
+                        pass
+                    try:
+                        if document_id < next(iter_postingslist_t1):
+                            pass
+                    except StopIteration:
+                        pass
+            elif len_postingslist_t1 < len_postingslist_t2:
+                for document_id in postingslist_t1:
+                    try:
+                        if document_id == next(iter_postingslist_t2):
+                            result_document_ids.append(document_id)
+                    except StopIteration:
+                        pass
+                    try:
+                        if document_id > next(iter_postingslist_t2):
+                            while document_id > next(iter_postingslist_t2):
+                                next(iter_postingslist_t2)
+                                if document_id == next(iter_postingslist_t2):
+                                    result_document_ids.append(document_id)
+                                    break
+                    except StopIteration:
+                        pass
+                    try:
+                        if document_id < next(iter_postingslist_t2):
+                            pass
+                    except:
                         pass
             data = self.open_data()
             if result_document_ids:
@@ -60,8 +90,11 @@ class Query():
                     print(f"Document Text: {data[str(result)]['news_text']}")
             else:
                 print("No Documents were found!")
-        except:
+        except UnboundLocalError:
             pass
 
 Query("weiß", "maße")
+Query("weiß", "masse")
+Query("weiss", "maße")
+Query("weiss", "masse")
 

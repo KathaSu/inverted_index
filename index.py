@@ -38,10 +38,10 @@ class Index():
                         dictonary[token][0] += 1
                         postings_list[dictonary[token][1]].append(document_id)
 
-        # with open('dictonary.json', 'w+', encoding="utf-8") as outfile:
-        #     json.dump(dictonary, outfile)
-        # with open('postings_list.json', 'w+', encoding="utf-8") as outfile:
-        #     json.dump(postings_list, outfile)
+        with open('dictonary.json', 'w+', encoding="utf-8") as outfile:
+            json.dump(dictonary, outfile)
+        with open('postings_list.json', 'w+', encoding="utf-8") as outfile:
+            json.dump(postings_list, outfile)
         with open('data.json', 'w+', encoding="utf-8") as outfile:
             outfile.write(documents.to_json(orient="index"))
 
