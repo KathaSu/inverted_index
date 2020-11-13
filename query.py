@@ -30,7 +30,9 @@ class Query():
             postingslist_t1 = postingslist[str(directory_t1[1])]
             iter_postingslist_t1 = iter(postingslist_t1)
         except KeyError:
+            print(f"Results for query {term1} AND {term2}")
             print(f"Key '{term1}' was not found in Dictonary")
+            print("--------")
 
         try:
             directory_t2 = directory[term2]
@@ -38,7 +40,9 @@ class Query():
             postingslist_t2 = postingslist[str(directory_t2[1])]
             iter_postingslist_t2 = iter(postingslist_t2)
         except KeyError:
+            print(f"Results for query {term1} AND {term2}")
             print(f"Key '{term2}' was not found in Dictonary")
+            print("--------")
 
         try: 
             if len_postingslist_t1 >= len_postingslist_t2:
@@ -85,11 +89,15 @@ class Query():
                         pass
             data = self.open_data()
             if result_document_ids:
+                print(f"Results for query {term1} AND {term2}: Document IDs {', '.join([str(result) for result in result_document_ids])}")
                 for result in result_document_ids:
                     print(f"Document ID: {result}")
                     print(f"Document Text: {data[str(result)]['news_text']}")
+                print("--------")
             else:
+                print(f"Results for query {term1} AND {term2}")
                 print("No Documents were found!")
+                print("--------")
         except UnboundLocalError:
             pass
 
@@ -97,4 +105,5 @@ Query("weiß", "maße")
 Query("weiß", "masse")
 Query("weiss", "maße")
 Query("weiss", "masse")
+Query("lieb", "dieser")
 
