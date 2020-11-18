@@ -1,20 +1,31 @@
+# Import the relevant Packages
 import json
+import nltk
+
+from nltk.stem.snowball import SnowballStemmer
 
 # Create class Query.
 class Query():
 
     # When class Query is called the following is executed.
     def __init__(self, term1, term2):
+        # Declare the Stemmer
+        stemmer = SnowballStemmer("german")
+        # Stem the query terms
+        stemmed_term1 = stemmer.stem(term1)
+        stemmed_term2 = stemmer.stem(term2)
+        self.term1 = term1
+        self.term2 = term2
         # Call function query for term1 and term2.
-        self.query(term1, term2)
+        self.query(stemmed_term1, stemmed_term2)
 
     # Read dictionary and postingslist from json file.
     def open_index(self):
-        with open('./dictonary.json') as f:
-            dictonary = json.load(f)
+        with open('./dictionary.json') as f:
+            dictionary = json.load(f)
         with open('./postings_list.json') as f:
             postingslist = json.load(f)
-        return dictonary, postingslist
+        return dictionary, postingslist
 
     # Read documents from json file.
     def open_data(self):
@@ -37,10 +48,11 @@ class Query():
             postingslist_t1 = postingslist[str(dictionary_t1[1])]
             # Call iteration function for postingslist of term1.
             iter_postingslist_t1 = iter(postingslist_t1)
-        # If the previous block creates an key error, the next part will be printed. 
+        # If the previous block creates an key error, the next part will be
+        # printed. 
         except KeyError:
-            print(f"Results for query {term1} AND {term2}")
-            print(f"Key '{term1}' was not found in Dictonary")
+            print(f"Results for stemmed query {self.term1} AND {self.term2}")
+            print(f"Key '{self.term1}' was not found in Dictionary")
             print("--------")
 
         try:
@@ -51,8 +63,8 @@ class Query():
             postingslist_t2 = postingslist[str(dictionary_t2[1])]
             iter_postingslist_t2 = iter(postingslist_t2)
         except KeyError:
-            print(f"Results for query {term1} AND {term2}")
-            print(f"Key '{term2}' was not found in Dictonary")
+            print(f"Results for stemmed query {self.term1} AND {self.term2}")
+            print(f"Key '{self.term2}' was not found in Dictionary")
             print("--------")
         
         # Check if both variable exist.
@@ -72,24 +84,24 @@ class Query():
                 # Create for-loop for the document ids.
                 for document_id in postingslist_t2:
                     try:
-                        # Check if document id from postingslist2 equals document id 
-                        # of postingslist1 at the current position.
+                        # Check if document id from postingslist2 equals document
+                        # id of postingslist1 at the current position.
                         if document_id == next(iter_postingslist_t1):
-                            # If statement is correct, document is added to list of
-                            # results.
+                            # If statement is correct, document is added to list
+                            # of results.
                             result_document_ids.append(document_id)
-                    # If preceeding block creates StopIteration error (which can be
-                    # caused if there is no more id left in the longer list), this
-                    # error will be ignored.
+                    # If preceeding block creates StopIteration error (which can
+                    # be caused if there is no more id left in the longer list),
+                    # this error will be ignored.
                     except StopIteration:
                         pass
                     try:
-                        # Check if document id from postingslist 2 is higher than the
-                        # document id of postingslist 2 at the current position.
+                        # Check if document id from postingslist 2 is higher than
+                        # the document id of postingslist 2 at the current position.
                         if document_id > next(iter_postingslist_t1):
-                            # As long as the document id for postingslist 2 is higher
-                            # than the document id at the current position the
-                            # following code will be executed.
+                            # As long as the document id for postingslist 2 is
+                            # higher than the document id at the current position
+                            # the following code will be executed.
                             while document_id > next(iter_postingslist_t1):
                                 # Call the next position in the iteratior of
                                 # postingslist 1.
@@ -145,12 +157,12 @@ class Query():
 
             # If we got results for our query, the following code will be executed.
             if result_document_ids:
-                # To print out the document text in the result the original documents
-                # will be opened.
+                # To print out the document text in the result the original 
+                # documents will be opened.
                 data = self.open_data()
                 # The search query and resulting document ids will be printed out.
                 print("Results for query {} AND {}: Document IDs {}"
-                    .format(term1, term2, ', '.join([str(result) for result in result_document_ids])))
+                    .format(self.term1, self.term2, ', '.join([str(result) for result in result_document_ids])))
                 # For every document the id + the document text will be printed out.    
                 for result in result_document_ids:
                     print(f"Document ID: {result}")
@@ -158,7 +170,7 @@ class Query():
                 print("--------")
             # This will be printed if there were no documents found for the query.
             else:
-                print(f"Results for query {term1} AND {term2}")
+                print(f"Results for query {self.term1} AND {self.term2}")
                 print("No Documents were found!")
                 print("--------")
 
@@ -167,5 +179,4 @@ Query("weiß", "maße")
 Query("weiß", "masse")
 Query("weiss", "maße")
 Query("weiss", "masse")
-Query("lieb", "dieser")
 
